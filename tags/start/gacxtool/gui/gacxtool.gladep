@@ -1,0 +1,13 @@
+<?xml version="1.0" standalone="no"?> <!--*- mode: xml -*-->
+<!DOCTYPE glade-project SYSTEM "http://glade.gnome.org/glade-project-2.0.dtd">
+
+<glade-project>
+  <name>gacxtool</name>
+  <program_name>gacxtool</program_name>
+  <directory>../</directory>
+  <source_directory>../src</source_directory>
+  <pixmaps_directory>../icons</pixmaps_directory>
+  <gnome_support>FALSE</gnome_support>
+  <use_widget_names>TRUE</use_widget_names>
+  <translatable_strings_file>../</translatable_strings_file>
+</glade-project>

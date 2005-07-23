@@ -1,0 +1,119 @@
+-----------------------------------------------------------------------------
+   Copyright (C) 2004 Leonid Zolotarev
+
+   Licensed under the terms of the BSD license, see file COPYING
+   for details.
+
+   GTK ACX Tool.
+
+   Roadmap.
+
+   $Id: ROADMAP,v 1.1.1.1 2005-07-23 23:16:09 zoleo Exp $
+-----------------------------------------------------------------------------
+
+version 0.0.1 scope:           [RELEASED 2004-08-07]
+
+a. Link tab
+b. Signal tab
+c. Signal History tab
+d. About tab
+
+version 0.0.1 to do:
+
+1. Complete signal tab.                       [DONE]
+2. Data box implementation.                   [DONE]
+3. Progress bar coloring via rc file.         [DONE]
+4. Implement link tab.                        [DONE]
+5. Implement about tab - initial version.     [DONE]
+6. Add icon - initial version.                [DONE]
+
+------------------------------------------------------
+
+version 0.0.2 scope:           [RELEASED 2004-08-18]
+
+a. Traffic tab
+b. Traffic History tab
+
+version 0.0.2 to do:
+
+1. Implement traffic tab.                     [DONE]
+2. Implement traffic history tab.             [DONE]
+3. Add coloring support for traffic controls. [DONE]
+4. Correct colors and databox bar sizes.      [DONE]
+5. Change max rate on demand.                 [DONE]
+6. Total values support.                      [DONE]
+7. Bitmap files rename.                       [DONE]
+
+------------------------------------------------------
+
+version 0.0.3 scope:           [RELEASED 2004-08-31]
+
+a. Command line arguments support.
+
+version 0.0.3 to do:
+
+1. Add bandwidth argument support.            [DONE]
+2. Add delay     argument support.            [DONE]
+3. Add rawdata   argument support.            [DONE]
+4. Add timeout   argument support.            [DONE]
+5. Add silent    argument support.            [DONE]
+
+------------------------------------------------------
+
+version 0.0.4 scope:           [RELEASED 2004-09-16]
+
+a. Take status bar in to use.
+b. New icon.
+c. New data rate widget.
+
+version 0.0.4 to do:
+
+1. Show device in the status bar.             [DONE]
+2. Show interface status in the status bar.   [DONE]
+3. Create new icon.                           [DONE]
+4. Change argument 'silent' to 'verbose'.     [DONE]
+5. New data rate widget.                      [DONE]
+
+------------------------------------------------------
+
+version 0.1.0 scope:           [RELEASED 2004-10-19]
+
+a. Settings tab
+
+version 0.1.0 to do:
+
+1. Implement Settings tab.                    [DONE]
+
+------------------------------------------------------
+
+version 0.1.1 scope:
+
+a. Options tab
+
+version 0.1.1 to do:
+
+1. Implement options tab.
+
+------------------------------------------------------
+
+version 0.1.2 scope:
+
+a. About tab
+
+version 0.1.2 to do:
+
+1. Implement about tab.
+2. Create new image for about tab.
+3. Language support.
+
+------------------------------------------------------
+
+version 0.2.0 scope:
+
+a. WEP tab
+
+version 0.2.0 to do:
+
+1. Implement WEP tab.
+
+------------------------------------------------------
