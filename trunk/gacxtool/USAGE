@@ -1,0 +1,48 @@
+-----------------------------------------------------------------------------
+   Copyright (C) 2004 Leonid Zolotarev
+
+   Licensed under the terms of the BSD license, see file COPYING
+   for details.
+
+   GTK ACX Tool.
+
+   Usage.
+
+   $Id: USAGE,v 1.1.1.1 2005-07-23 23:16:09 zoleo Exp $
+-----------------------------------------------------------------------------
+
+GTK ACX Tool supports following command line arguments:
+
+gacxtool <interface>
+Interface name.
+Default value is 'acx0'.
+
+gacxtool -i <interface>
+Interface name.
+Default value is 'acx0'.
+
+gacxtool -b <bandwidth>
+This value is used for to set traffic history graph size.
+Default value is 256.
+
+gacxtool -d <delay>
+Number of timeouts before updating signal and traffic data.
+Default value is 1.
+
+gacxtool -h
+Shows short help information.
+
+gacxtool -r
+Switches off absolute values display in 'Signal' and 'Traffic' tabs.
+Default value is 'on'.
+
+gacxtool -v
+Switches on console output.
+Default value is 'off'.
+
+gacxtool -t <timeout>
+Driver poll timeout in milliseconds.
+Default value is 100.
+
+These arguments could be used in any combination.
+If your interface is acx0 than you can use gacxtool without any arguments.
