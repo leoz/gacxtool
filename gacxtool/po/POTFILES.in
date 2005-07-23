@@ -1,0 +1,28 @@
+#############################################################################
+#  Copyright (C) 2004 Leonid Zolotarev
+#
+#  Licensed under the terms of the BSD license, see file COPYING
+#  for details.
+#
+#  GTK ACX Tool.
+#
+#  List of source files containing translatable strings.
+#
+#  $Id: POTFILES.in,v 1.1.1.1 2005-07-23 23:16:09 zoleo Exp $
+#############################################################################
+
+src/main.c
+src/interface.c
+src/callbacks.c
+src/support.c
+src/gacxopt.c
+src/gacxtimer.c
+src/gacxsignal.c
+src/gacxtraffic.c
+src/gacxstatus.c
+src/gacxrate.c
+src/gacxbox.c
+src/gacxset.c
+src/acxlib.c
+
+#############################################################################
