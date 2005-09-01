@@ -8,7 +8,7 @@
  *
  * Data Box.
  *
- * $Id: gacxbox.c,v 1.1.1.1 2005-07-23 23:16:11 zoleo Exp $
+ * $Id: gacxbox.c,v 1.2 2005-09-01 23:07:15 zoleo Exp $
  ***************************************************************************/
 
 #include "gacxbox.h"
@@ -63,7 +63,7 @@ void gacx_signal_databox_data_create ( GtkWidget* box )
 	gint i = 0;
 
 	g_signal_connect ( GTK_OBJECT (box), "destroy",
-		               GTK_SIGNAL_FUNC (gtk_databox_data_destroy_all), NULL );
+		               GTK_SIGNAL_FUNC (gtk_databox_data_remove_all), NULL );
 
 	_d_sig = g_malloc ( sizeof ( gacx_signal_databox_data ) );
 
@@ -102,7 +102,7 @@ void gacx_signal_databox_data_init ()
 
 		color = gacx_get_widget_color ( _d_sig->sdd_box,
                                         "quality_progressbar" );
-		gtk_databox_data_add_x_y ( GTK_DATABOX (_d_sig->sdd_box),
+		gtk_databox_data_add ( GTK_DATABOX (_d_sig->sdd_box),
 	                               GACX_POINTS,
 				                   _d_sig->sdd_X,
 	                               _d_sig->sdd_Y_quality,
@@ -110,28 +110,30 @@ void gacx_signal_databox_data_init ()
 
 		color = gacx_get_widget_color ( _d_sig->sdd_box,
                                         "strength_progressbar" );
-		gtk_databox_data_add_y   ( GTK_DATABOX (_d_sig->sdd_box),
+		gtk_databox_data_add ( GTK_DATABOX (_d_sig->sdd_box),
 	                               GACX_POINTS,
+				                   _d_sig->sdd_X,
 	                               _d_sig->sdd_Y_strength,
-	                               0, color, GTK_DATABOX_LINES, GACX_SIGNAL_DOT_SIZE );
+								   color, GTK_DATABOX_LINES, GACX_SIGNAL_DOT_SIZE );
 
 		color = gacx_get_widget_color ( _d_sig->sdd_box,
                                         "noise_progressbar" );
-		gtk_databox_data_add_y   ( GTK_DATABOX (_d_sig->sdd_box),
+		gtk_databox_data_add ( GTK_DATABOX (_d_sig->sdd_box),
 	                               GACX_POINTS,
+				                   _d_sig->sdd_X,
 	                               _d_sig->sdd_Y_noise,
-	                               0, color, GTK_DATABOX_LINES, GACX_SIGNAL_DOT_SIZE );
+								   color, GTK_DATABOX_LINES, GACX_SIGNAL_DOT_SIZE );
 
 		color = gacx_get_widget_color_by_state ( _d_sig->sdd_box,
                                                  "signal_databox",
                                                  GTK_STATE_SELECTED );
-		index = gtk_databox_data_add_y ( GTK_DATABOX (_d_sig->sdd_box),
+		index = gtk_databox_data_add ( GTK_DATABOX (_d_sig->sdd_box),
                                          GACX_POINTS,
+				                   _d_sig->sdd_X,
 				                         _d_sig->sdd_Y_noise,
-                                         index, color,
-                                         GTK_DATABOX_GRID, GACX_DOT_SIZE_GRID );
+										 color, GTK_DATABOX_GRID, GACX_DOT_SIZE_GRID );
 
-		gtk_databox_data_set_grid_config ( GTK_DATABOX (_d_sig->sdd_box),
+		gtk_databox_grid_set_config ( GTK_DATABOX (_d_sig->sdd_box),
                                            index,
                                            GACX_POINTS_Y / GACX_STEP_GRID - 1,
                                            GACX_POINTS   / GACX_STEP_GRID - 1 );
@@ -189,7 +191,7 @@ void gacx_traffic_databox_data_create ( GtkWidget* box )
 	gint i = 0;
 
 	g_signal_connect ( GTK_OBJECT (box), "destroy",
-		               GTK_SIGNAL_FUNC (gtk_databox_data_destroy_all), NULL );
+		               GTK_SIGNAL_FUNC (gtk_databox_data_remove_all), NULL );
 
 	_d_trf = g_malloc ( sizeof ( gacx_traffic_databox_data ) );
 
@@ -227,7 +229,7 @@ void gacx_traffic_databox_data_init ()
 
 		color = gacx_get_widget_color ( _d_trf->tdd_box,
                                         "transmit_progressbar" );
-		gtk_databox_data_add_x_y ( GTK_DATABOX (_d_trf->tdd_box),
+		gtk_databox_data_add ( GTK_DATABOX (_d_trf->tdd_box),
 	                               _d_trf->tdd_max_rate,
 				                   _d_trf->tdd_X,
 	                               _d_trf->tdd_Y_transmit,
@@ -235,21 +237,22 @@ void gacx_traffic_databox_data_init ()
 
 		color = gacx_get_widget_color ( _d_trf->tdd_box,
                                         "receive_progressbar" );
-		gtk_databox_data_add_y   ( GTK_DATABOX (_d_trf->tdd_box),
+		gtk_databox_data_add ( GTK_DATABOX (_d_trf->tdd_box),
 	                               _d_trf->tdd_max_rate,
+				                   _d_trf->tdd_X,
 	                               _d_trf->tdd_Y_receive,
-	                               0, color, GTK_DATABOX_LINES, GACX_TRAFFIC_DOT_SIZE );
+								   color, GTK_DATABOX_LINES, GACX_TRAFFIC_DOT_SIZE );
 
 		color = gacx_get_widget_color_by_state ( _d_trf->tdd_box,
                                                  "traffic_databox",
                                                  GTK_STATE_SELECTED );
-		index = gtk_databox_data_add_y ( GTK_DATABOX (_d_trf->tdd_box),
+		index = gtk_databox_data_add ( GTK_DATABOX (_d_trf->tdd_box),
                                          _d_trf->tdd_max_rate,
+				                   _d_trf->tdd_X,
 				                         _d_trf->tdd_Y_receive,
-                                         index, color,
-                                         GTK_DATABOX_GRID, GACX_DOT_SIZE_GRID );
+										 color, GTK_DATABOX_GRID, GACX_DOT_SIZE_GRID );
 
-		gtk_databox_data_set_grid_config ( GTK_DATABOX (_d_trf->tdd_box),
+		gtk_databox_grid_set_config ( GTK_DATABOX (_d_trf->tdd_box),
                                            index,
                                            GACX_TRAFFIC_GRID,
                                            _d_trf->tdd_max_rate / GACX_STEP_GRID - 1 );

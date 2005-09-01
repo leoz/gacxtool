@@ -8,7 +8,7 @@
  *
  * Signal widgets.
  *
- * $Id: gacxsignal.c,v 1.1.1.1 2005-07-23 23:16:11 zoleo Exp $
+ * $Id: gacxsignal.c,v 1.2 2005-09-01 23:07:15 zoleo Exp $
  ***************************************************************************/
 
 #include "gacxopt.h"
@@ -23,6 +23,9 @@ void gacx_update_bar_percent ( GtkWidget* bar, gint percent )
 	gdouble val  = 0.0;
 	if ( percent > 100 ) {
 		percent = 100;
+	}
+	else if ( percent < 0 ) {
+		percent = 0;
 	}
 	val = percent * 0.01;
 	gtk_progress_bar_set_fraction ( GTK_PROGRESS_BAR ( bar ), val );
