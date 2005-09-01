@@ -6,7 +6,7 @@
  *
  * ACX Library
  *
- * $Id: acxlib.c,v 1.1.1.1 2005-07-23 23:16:11 zoleo Exp $
+ * $Id: acxlib.c,v 1.2 2005-09-01 23:07:15 zoleo Exp $
  ***************************************************************************/
 
 #include <stdlib.h>
@@ -15,11 +15,13 @@
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <net/if.h>
+#ifndef __linux__
 #include <net/if_media.h>
 #include <net80211/ieee80211.h>
 #include <net80211/ieee80211_ioctl.h>
 #include <dev/wi/if_wavelan_ieee.h>
 #include <acx/if_acxioctl.h>
+#endif /* __linux__ */
 #include "acxlib.h"
 
 #define ACX_IFACE_NAME    "acx0"
@@ -63,6 +65,133 @@ int acx_interface_close ()
 }
 
 /*
+ * Calculate level as windows driver (feb 2003)
+ */
+int acx_user_level ( int rawlevel )
+{
+	int winlevel= ( int ) ( 0.5 + 0.625 * rawlevel );
+	if ( winlevel > 100 ) {
+		winlevel = 100;
+	}
+	return winlevel;
+}
+
+#ifdef __linux__
+
+int acx_interface_get_stat ( acx_interface_stat* stat )
+{
+    int result = ACX_NO_ERROR;
+	return result;
+}
+
+int acx_rate_supported ( acx_rate rate, int rates )
+{
+	int result = 0;
+	return result;
+}
+
+char* net_wi_get_bssid ()
+{
+	return "";
+}
+
+char* net_wi_get_status ( const char* bssid )
+{
+	return "";
+}
+
+int net_wi_words_to_int ( struct wi_req *wreq )
+{
+	return 0;
+}
+
+int net_wi_get_txrate ()
+{
+	return 0;
+}
+
+int net_wi_get_channel ()
+{
+	return 0;
+}
+
+char* net_80211_get_ssid ()
+{
+    return "";
+}
+
+/***************************************************************************/
+
+char* net_get_media_status ()
+{
+    return "";
+}
+
+/***************************************************************************/
+
+int acx_get_clockrate ()
+{
+	return 0;
+}
+
+/***************************************************************************/
+
+int acx_get_starts_fast ()
+{
+	int    value = 0;
+	return value;
+}
+
+int acx_get_scan_period ()
+{
+	return 0;
+}
+
+int acx_get_threshold ()
+{
+	int    value = 0;
+	return value;
+}
+
+int acx_get_min_time ()
+{
+	int    value = 0;
+	return value;
+}
+
+int acx_get_max_time ()
+{
+	int    value = 0;
+	return value;
+}
+
+/***************************************************************************/
+
+void acx_set_starts_fast ( int value )
+{
+}
+
+void acx_set_scan_period ( int value )
+{
+}
+
+void acx_set_threshold ( int value )
+{
+}
+
+void acx_set_min_time ( int value )
+{
+}
+
+void acx_set_max_time ( int value )
+{
+}
+
+#else
+
+/***************************************************************************/
+
+/*
  * Set/Get
  */
 int acx_sgioc ( u_int16_t i_type, void *i_data )
@@ -97,18 +226,6 @@ int net_wi_gioc ( struct wi_req *wreq )
         return ACX_IOCTL_ERROR;
     }
     return ACX_NO_ERROR;
-}
-
-/*
- * Calculate level as windows driver (feb 2003)
- */
-int acx_user_level ( int rawlevel )
-{
-	int winlevel= ( int ) ( 0.5 + 0.625 * rawlevel );
-	if ( winlevel > 100 ) {
-		winlevel = 100;
-	}
-	return winlevel;
 }
 
 int acx_interface_get_stat ( acx_interface_stat* stat )
@@ -411,5 +528,7 @@ void acx_set_max_time ( int value )
 	sysctlbyname ( _acx_sysctl_name [ acx_sysctl_max_time ],
                    NULL, NULL, &value, len );
 }
+
+#endif /* __linux__ */
 
 /***************************************************************************/

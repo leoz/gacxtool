@@ -8,7 +8,7 @@
  *
  * Main.
  *
- * $Id: main.c,v 1.1.1.1 2005-07-23 23:16:11 zoleo Exp $
+ * $Id: main.c,v 1.2 2005-09-01 23:07:15 zoleo Exp $
  ***************************************************************************/
 
 #ifdef HAVE_CONFIG_H
@@ -29,7 +29,7 @@
 
 /***************************************************************************/
 
-static char* _id = "$Id: main.c,v 1.1.1.1 2005-07-23 23:16:11 zoleo Exp $";
+static char* _id = "$Id: main.c,v 1.2 2005-09-01 23:07:15 zoleo Exp $";
 
 /***************************************************************************/
 
@@ -80,7 +80,9 @@ int main (int argc, char *argv[])
 		} else {
 			optind = 1;
 		}
+		#ifndef __linux__
 		optreset = 1;
+		#endif /* __linux__ */
 	}
 	/* Input parameters setup. */
 	while ( ( ch = getopt (argc, argv, "b:d:hrvt:" ) ) != -1 ) {

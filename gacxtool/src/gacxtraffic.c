@@ -8,7 +8,7 @@
  *
  * Traffic widgets.
  *
- * $Id: gacxtraffic.c,v 1.1.1.1 2005-07-23 23:16:11 zoleo Exp $
+ * $Id: gacxtraffic.c,v 1.2 2005-09-01 23:07:15 zoleo Exp $
  ***************************************************************************/
 
 #include "gacxopt.h"
@@ -25,6 +25,9 @@ void gacx_update_bar_rate ( GtkWidget* bar,
 	gdouble val  = kbps / max_rate;
 	if ( val > 1.0 ) {
 		val = 1.0;
+	}
+	else if ( val < 0.0 ) {
+		val = 0.0;
 	}
 	gtk_progress_bar_set_fraction ( GTK_PROGRESS_BAR ( bar ), val );
 	text = g_strdup_printf ( "%.1f Kbps", kbps );

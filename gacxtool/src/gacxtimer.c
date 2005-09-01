@@ -8,7 +8,7 @@
  *
  * Timer.
  *
- * $Id: gacxtimer.c,v 1.1.1.1 2005-07-23 23:16:11 zoleo Exp $
+ * $Id: gacxtimer.c,v 1.2 2005-09-01 23:07:15 zoleo Exp $
  ***************************************************************************/
 
 #include "support.h"
@@ -91,6 +91,7 @@ gboolean gacx_timer_proc ( gpointer data )
 {
 	gchar* val_bssid = NULL;
 	acx_interface_stat stat;
+	memset(&stat, 0, sizeof(stat));
 	gacx_timer_data* timer_data = ( gacx_timer_data* ) data;
 	if ( timer_data && timer_data->td_iface == ACX_NO_ERROR ) {
 		if ( acx_interface_get_stat ( &stat ) == ACX_NO_ERROR ) {
