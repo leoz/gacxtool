@@ -1,12 +1,12 @@
 /****************************************************************************
- * Copyright (C) 2004 Leonid Zolotarev
+ * Copyright (C) 2004 - 2005 Leonid Zolotarev
  *
  * Licensed under the terms of the BSD license, see file COPYING
  * for details.
  *
  * ACX Library
  *
- * $Id: acxlib.c,v 1.2 2005-09-01 23:07:15 zoleo Exp $
+ * $Id: acxlib.c,v 1.3 2005-09-10 21:02:47 zoleo Exp $
  ***************************************************************************/
 
 #include <stdlib.h>
@@ -14,17 +14,23 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
-#include <net/if.h>
 #ifndef __linux__
+#include <net/if.h>
 #include <net/if_media.h>
 #include <net80211/ieee80211.h>
 #include <net80211/ieee80211_ioctl.h>
 #include <dev/wi/if_wavelan_ieee.h>
 #include <acx/if_acxioctl.h>
+#else
+#include <iwlib.h>
 #endif /* __linux__ */
 #include "acxlib.h"
 
+#ifndef __linux__
 #define ACX_IFACE_NAME    "acx0"
+#else
+#define ACX_IFACE_NAME    "wlan0"
+#endif /* __linux__ */
 
 char* _acx_iface_name = NULL;
 int   _acx_iface_sock = -1;
@@ -35,15 +41,27 @@ char* acx_interface_default ()
 	return ACX_IFACE_NAME;
 }
 
+#define ACX_BSSID_EMPTY "00:00:00:00:00:00"
+
+char* net_wi_get_status ( const char* bssid )
+{
+	if ( strcmp ( bssid, ACX_BSSID_EMPTY ) != 0 ) {
+		return "Associated";
+	}
+	return "Not Associated";
+}
+
+#ifdef __linux__
+
 int acx_interface_open ( const char* name )
 {
 	if ( ! _acx_iface_name && name ) {
 		_acx_iface_name = malloc ( sizeof ( char ) * IFNAMSIZ );
 		bzero ( _acx_iface_name, sizeof ( char ) * IFNAMSIZ );
-		memcpy ( _acx_iface_name, name, sizeof ( name ) );
+		strcpy ( _acx_iface_name, name );
 	}
 	if ( _acx_iface_sock == -1 ) {
-		_acx_iface_sock = socket ( AF_INET, SOCK_DGRAM, 0 );
+		_acx_iface_sock = iw_sockets_open ();
 	}
 	if ( _acx_iface_name && _acx_iface_sock > -1 ) {
 		return ACX_NO_ERROR;
@@ -58,29 +76,49 @@ int acx_interface_close ()
 		_acx_iface_name = NULL;
 	}
 	if ( _acx_iface_sock > -1 ) {
-		close ( _acx_iface_sock );
+		iw_sockets_close ( _acx_iface_sock );
 		_acx_iface_sock = -1;
 	}
 	return ACX_NO_ERROR;
 }
 
 /*
- * Calculate level as windows driver (feb 2003)
+ * Ripped out from some gnome source code.
  */
 int acx_user_level ( int rawlevel )
 {
-	int winlevel= ( int ) ( 0.5 + 0.625 * rawlevel );
+	int winlevel= (int)rint ((log (rawlevel) / log (94)) * 100.0);
 	if ( winlevel > 100 ) {
 		winlevel = 100;
 	}
 	return winlevel;
 }
 
-#ifdef __linux__
-
 int acx_interface_get_stat ( acx_interface_stat* stat )
 {
     int result = ACX_NO_ERROR;
+	iwrange range;
+	iwstats stats;
+	int has_range;
+	
+	has_range = iw_get_range_info (_acx_iface_sock, _acx_iface_name, &range) < 0 ? 0 : 1;
+
+	if (!iw_get_stats (_acx_iface_sock, _acx_iface_name, &stats,
+			  &range, has_range)) {
+		stat->is_strength       = stats.qual.qual;
+//		stat->is_strength_avg   = stats.rx_level / stats.rx_count;
+//		stat->is_strength_max   = stats.rx_levelmax;
+		stat->is_noise          = stats.qual.noise;
+//		stat->is_noise_avg      = stats.rx_snr   / stats.rx_count;
+//		stat->is_noise_max      = stats.rx_snrmax;
+				  /*
+		stat->is_bytes_received = stats.rx_bytes;
+		stat->is_bytes_sent     = stats.tx_bytes;
+		stat->is_rates          = stats.tx_rates;	  
+				  */
+	} else {
+		result = ACX_IOCTL_ERROR;
+	}
 	return result;
 }
 
@@ -92,46 +130,93 @@ int acx_rate_supported ( acx_rate rate, int rates )
 
 char* net_wi_get_bssid ()
 {
-	return "";
-}
-
-char* net_wi_get_status ( const char* bssid )
-{
-	return "";
-}
-
-int net_wi_words_to_int ( struct wi_req *wreq )
-{
-	return 0;
+	static char buff[64];
+	struct iwreq wrq;
+	unsigned char *ptr;
+	
+	memset(&wrq, 0, sizeof(wrq));
+	memset(buff, 0, sizeof(buff));
+	
+	strcpy(wrq.ifr_name, _acx_iface_name);
+	
+	if(ioctl(_acx_iface_sock, SIOCGIWAP, &wrq) >= 0) {
+		ptr = wrq.u.ap_addr.sa_data;
+		sprintf(buff, "%02X:%02X:%02X:%02X:%02X:%02X",
+		(ptr[0] & 0xFF), (ptr[1] & 0xFF), (ptr[2] & 0xFF),
+		(ptr[3] & 0xFF), (ptr[4] & 0xFF), (ptr[5] & 0xFF)
+		);
+	}
+	
+	return buff;
 }
 
 int net_wi_get_txrate ()
 {
-	return 0;
+	struct iwreq wrq;
+	
+	memset(&wrq, 0, sizeof(wrq));
+	
+	/* Get bit rate */
+	strcpy(wrq.ifr_name, _acx_iface_name);
+	if(ioctl(_acx_iface_sock, SIOCGIWRATE, &wrq) >= 0) {
+	} else {
+		fprintf(stderr, "SIOCGIWRATE: %s\n", strerror(errno));    
+	}
+			
+	return wrq.u.bitrate.value/KILO;
 }
 
 int net_wi_get_channel ()
 {
-	return 0;
+	struct iwreq wrq;
+
+	memset(&wrq, 0, sizeof(wrq));
+	
+	/* Get frequency / channel */
+	strcpy(wrq.ifr_name, _acx_iface_name);
+	if(ioctl(_acx_iface_sock, SIOCGIWFREQ, &wrq) >= 0) {
+	} else {
+		fprintf(stderr, "SIOCGIWFREQ: %s\n", strerror(errno));    
+	}
+	
+	return iw_freq2float(&(wrq.u.freq));
 }
 
 char* net_80211_get_ssid ()
 {
-    return "";
+	struct iwreq wrq;
+	
+	static char essid_buf[IW_ESSID_MAX_SIZE + 1];
+	
+	memset(essid_buf, 0, sizeof(essid_buf));
+	memset(&wrq, 0, sizeof(wrq));
+	
+	/* Get ESSID */
+	strcpy(wrq.ifr_name, _acx_iface_name);
+	wrq.u.essid.pointer = (caddr_t) essid_buf;
+	wrq.u.essid.length = IW_ESSID_MAX_SIZE;
+	wrq.u.essid.flags = 0;
+	if(ioctl(_acx_iface_sock, SIOCGIWESSID, &wrq) >= 0) {
+		essid_buf[(unsigned int) wrq.u.essid.length] = '\0';
+	} else {
+		fprintf(stderr, "SIOCGIWESSID: %s\n", strerror(errno));    
+	}
+	
+	return essid_buf;
 }
 
 /***************************************************************************/
 
 char* net_get_media_status ()
 {
-    return "";
+    return "???";
 }
 
 /***************************************************************************/
 
 int acx_get_clockrate ()
 {
-	return 0;
+	return 1;
 }
 
 /***************************************************************************/
@@ -187,9 +272,52 @@ void acx_set_max_time ( int value )
 {
 }
 
-#else
+/***************************************************************************/
+
+#else /* FreeBSD */
 
 /***************************************************************************/
+
+int acx_interface_open ( const char* name )
+{
+	if ( ! _acx_iface_name && name ) {
+		_acx_iface_name = malloc ( sizeof ( char ) * IFNAMSIZ );
+		bzero ( _acx_iface_name, sizeof ( char ) * IFNAMSIZ );
+		memcpy ( _acx_iface_name, name, sizeof ( name ) );
+	}
+	if ( _acx_iface_sock == -1 ) {
+		_acx_iface_sock = socket ( AF_INET, SOCK_DGRAM, 0 );
+	}
+	if ( _acx_iface_name && _acx_iface_sock > -1 ) {
+		return ACX_NO_ERROR;
+	}
+	return ACX_IFACE_OPEN_ERROR;
+}
+
+int acx_interface_close ()
+{
+	if ( _acx_iface_name ) {
+		free ( _acx_iface_name );
+		_acx_iface_name = NULL;
+	}
+	if ( _acx_iface_sock > -1 ) {
+		close ( _acx_iface_sock );
+		_acx_iface_sock = -1;
+	}
+	return ACX_NO_ERROR;
+}
+
+/*
+ * Calculate level as windows driver (feb 2003)
+ */
+int acx_user_level ( int rawlevel )
+{
+	int winlevel= ( int ) ( 0.5 + 0.625 * rawlevel );
+	if ( winlevel > 100 ) {
+		winlevel = 100;
+	}
+	return winlevel;
+}
 
 /*
  * Set/Get
@@ -307,16 +435,6 @@ char* net_wi_get_bssid ()
 	}
 
 	return bssid;
-}
-
-#define ACX_BSSID_EMPTY "00:00:00:00:00:00"
-
-char* net_wi_get_status ( const char* bssid )
-{
-	if ( strcmp ( bssid, ACX_BSSID_EMPTY ) != 0 ) {
-		return "Associated";
-	}
-	return "Not Associated";
 }
 
 #define ACX_BUFF_LEN 10

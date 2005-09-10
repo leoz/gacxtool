@@ -1,5 +1,5 @@
 #############################################################################
-#  Copyright (C) 2004 Leonid Zolotarev
+#  Copyright (C) 2004 - 2005 Leonid Zolotarev
 #
 #  Licensed under the terms of the BSD license, see file COPYING
 #  for details.
@@ -8,7 +8,7 @@
 #
 #  Process this file with automake to produce Makefile.in
 #
-#  $Id: Makefile.am,v 1.1.1.1 2005-07-23 23:16:11 zoleo Exp $
+#  $Id: Makefile.am,v 1.2 2005-09-10 21:02:47 zoleo Exp $
 #############################################################################
 
 INCLUDES = \
@@ -17,7 +17,7 @@ INCLUDES = \
 	-DGACXTOOL_MAJOR=$(GACXTOOL_MAJOR) \
 	-DGACXTOOL_MINOR=$(GACXTOOL_MINOR) \
 	-DGACXTOOL_MICRO=$(GACXTOOL_MICRO) \
-	@PACKAGE_CFLAGS@
+	$(GTK_CFLAGS) $(GTKDATABOX_CFLAGS) $(SYSTEM_CFLAGS)
 
 bin_PROGRAMS = gacxtool
 
@@ -36,8 +36,7 @@ gacxtool_SOURCES = \
 	gacxset.c     gacxset.h     \
 	acxlib.c      acxlib.h
 
-gacxtool_LDADD = @PACKAGE_LIBS@ $(INTLLIBS) \
-	-lgtkdatabox
+gacxtool_LDADD = $(GTK_LIBS) $(GTKDATABOX_LIBS) $(SYSTEM_LIBS) $(INTLLIBS)
 
 clean:
 	rm -f \
