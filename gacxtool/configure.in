@@ -1,5 +1,5 @@
 dnl--------------------------------------------------------------------------
-dnl  Copyright (C) 2004 Leonid Zolotarev
+dnl  Copyright (C) 2004 - 2005 Leonid Zolotarev
 dnl
 dnl  Licensed under the terms of the BSD license, see file COPYING
 dnl  for details.
@@ -8,16 +8,14 @@ dnl  GTK ACX Tool.
 dnl
 dnl  Process this file with autoconf to produce a configure script.
 dnl
-dnl  $Id: configure.in,v 1.1.1.1 2005-07-23 23:16:09 zoleo Exp $
+dnl  $Id: configure.in,v 1.2 2005-09-10 21:02:47 zoleo Exp $
 dnl--------------------------------------------------------------------------
-
 
 AC_INIT(configure.in)
 AM_CONFIG_HEADER(config.h)
 
-
 GACXTOOL_MAJOR=0
-GACXTOOL_MINOR=1
+GACXTOOL_MINOR=2
 GACXTOOL_MICRO=0
 GACXTOOL_VERSION=$GACXTOOL_MAJOR.$GACXTOOL_MINOR.$GACXTOOL_MICRO
 
@@ -25,6 +23,8 @@ AC_SUBST(GACXTOOL_MAJOR)
 AC_SUBST(GACXTOOL_MINOR)
 AC_SUBST(GACXTOOL_MICRO)
 AC_SUBST(GACXTOOL_VERSION)
+
+AC_CANONICAL_TARGET
 
 AM_INIT_AUTOMAKE(gacxtool, $GACXTOOL_VERSION)
 AM_MAINTAINER_MODE
@@ -34,10 +34,28 @@ AC_PROG_CC
 AM_PROG_CC_STDC
 AC_HEADER_STDC
 
-pkg_modules="gtk+-2.0 >= 2.0.0"
-PKG_CHECK_MODULES(PACKAGE, [$pkg_modules])
-AC_SUBST(PACKAGE_CFLAGS)
-AC_SUBST(PACKAGE_LIBS)
+PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.0.0)
+AC_SUBST(GTK_CFLAGS)
+AC_SUBST(GTK_LIBS)
+
+PKG_CHECK_MODULES(GTKDATABOX, gtkdatabox)
+AC_SUBST(GTKDATABOX_CFLAGS)
+AC_SUBST(GTKDATABOX_LIBS)
+
+case "$target_os" in
+    linux*)
+		
+	SYSTEM_CFLAGS=
+	SYSTEM_LIBS=-liw
+        ;;
+    *)
+	SYSTEM_CFLAGS=
+	SYSTEM_LIBS=
+        ;;
+esac
+
+AC_SUBST(SYSTEM_CFLAGS)
+AC_SUBST(SYSTEM_LIBS)
 
 GETTEXT_PACKAGE=gacxtool
 AC_SUBST(GETTEXT_PACKAGE)
@@ -55,4 +73,3 @@ icons/Makefile
 themes/Makefile
 themes/default/Makefile
 ])
-
