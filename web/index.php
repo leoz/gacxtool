@@ -12,6 +12,12 @@
 <h2>News</h2>
 
 <p>
+2005-09-22: Site was reimplemented using <a href="http://www.php.net">PHP</a>
+and moved from <a href="http://www.leoz.org">LeoZ ORG</a>
+to <a href="http://sourceforge.net">SF.net</a>.
+</p>
+
+<p>
 2004-11-04: Some links were added.
 </p>
 
@@ -50,7 +56,7 @@ NOTE: Previous versions were removed from the site.
 <div id="footer">
 	&copy; 2004 - 2005 Leonid Zolotarev. All rights reserved.
 	<br/>
-	$Id: index.php,v 1.1 2005-09-22 20:51:42 zoleo Exp $
+	$Id: index.php,v 1.2 2005-09-22 21:05:17 zoleo Exp $
 </div>
 </body>
 </html>
